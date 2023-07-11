@@ -4,7 +4,7 @@ function NavigationBar() {
     return(
         <nav className="navbar navbar-expand-md" style = {{backgroundColor: "#60ff70"}}>
             <div className="container-fluid">
-              <a className="navbar-brand">Bøler Åpne Barnehage</a>
+              <a className="navbar-brand">Logo</a>
               <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div className="navbar-nav">
                     <Link to = "/" className = "nav-link">Hjem</Link>

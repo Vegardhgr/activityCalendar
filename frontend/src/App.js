@@ -3,10 +3,11 @@ import Router from './router/router';
 
 function App() {
   return (
-    <div>
-      <NavBar/>
-      <Router/>
-      
+    <div style={{backgroundColor: "#e6ffe6"}}>
+        <NavBar/>
+        <div class="d-flex justify-content-center">
+          <Router/>
+        </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 function home() {
     return (
-    <div>Hei</div>
+        <div>Forside</div>
     );
 }
 

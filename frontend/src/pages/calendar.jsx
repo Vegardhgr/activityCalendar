@@ -66,7 +66,7 @@ function Calendar() {
             }
         }
         return(
-            <div className = "mt-2">
+            <div className = "mt-2 d-flex justify-content-center">
                 <div style = {{width: "fit-content"}}>
                     <div style = {{height: calendarHeight+"px", padding: "10px", backgroundColor: "lightGreen"}}>
                         <div className = "mb-2" style={{ display: "flex", justifyContent: "space-between" }}>

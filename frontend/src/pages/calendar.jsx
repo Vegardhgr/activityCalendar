@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import Button from '../components/button';
+import Button from '../components/utils/button';
 
 function Calendar() {
     const [currYear, setCurrYear] = useState(new Date().getFullYear());

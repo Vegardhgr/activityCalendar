@@ -36,6 +36,7 @@ function UpcomingActivities({ activities }) {
 
 
     activities = [...activities, ...defaultActivities];
+    
 
     return (
         <div className = "row justify-content-center ">

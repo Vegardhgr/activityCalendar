@@ -15,5 +15,5 @@ function Router({activities, setActivities}) {
             <Route path="/kommende-aktiviteter" element = {<UpcomingActivities activities={activities} />}/>
         </Routes>
     );
-}
+}   
 export default Router;

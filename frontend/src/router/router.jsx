@@ -9,7 +9,7 @@ function Router({activities, setActivities}) {
     return (
         <Routes>
             <Route path="/" element = {<Home/>}/>
-            <Route path="/kalender" element = {<Calendar/>}/>
+            <Route path="/kalender" element = {<Calendar activities={activities}/>}/>
             <Route path="/logg-inn" element = {<LogIn/>}/>
             <Route path="/ny-aktivitet" element = {<NewActivity setActivities={setActivities} />}/>
             <Route path="/kommende-aktiviteter" element = {<UpcomingActivities activities={activities} />}/>

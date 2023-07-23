@@ -1,90 +1,58 @@
 import {useEffect, useRef, useState} from "react";
-import Button from '../components/utils/button';
+import MonthlyCalendar from "../components/calendars/monthly/monthlyCalendar";
+import SortActivities from "../components/utils/sortActivities";
 
-function Calendar() {
-    const [currYear, setCurrYear] = useState(new Date().getFullYear());
-    const [currMonth, setCurrMonth] = useState(new Date().getMonth());
-    const calendarDayBoxHeight = 120;
-    const calendarDayBoxWidth = 120;
-    const marginBetweenEachBox = 10;
-    const calendarHeight = (calendarDayBoxHeight + marginBetweenEachBox)*5 + 60;
-    const monthNames = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    const [numberOfDays, setNumberOfDays] = useState(new Date(currYear, currMonth+1, 0).getDate());
-    const [monthName, setMonthName] = useState(monthNames[currMonth]);
-    useEffect(() => {
-        setNumberOfDays(new Date(currYear, currMonth+1, 0).getDate())
-        setMonthName(monthNames[currMonth]);
-    }, [currYear, currMonth]);
+function Calendar({activities}) {
+    const currentDate = new Date();
+    const [clickedDate, setClickedDate] = useState([currentDate.getDate(), currentDate.getMonth()+1, currentDate.getFullYear()]);
+    const sortedActivities = SortActivities({activityArray: activities})
 
-    function prevMonth() {
-        if (currMonth===0) {
-            setCurrMonth(11);
-            setCurrYear(currYear-1);
-        } else {
-            setCurrMonth(currMonth-1);
-        }
-    }
+    let day = clickedDate[0];
+    day = day.toLocaleString('en-US', {
+        minimumIntegerDigits: 2,
+        useGrouping: false
+      })
 
-    function nextMonth() {
-        if (currMonth===11) {
-            setCurrMonth(0);
-            setCurrYear(currYear+1);
-        } else {
-            setCurrMonth(currMonth+1);
-        }
-    }
+    let month = clickedDate[1];
+    month = month.toLocaleString('en-US', {
+        minimumIntegerDigits: 2,
+        useGrouping: false
+      })
+    const year = clickedDate[2];
 
-    const calendarTable = ()=> {
-        const tableArr = [];
-        let row = [];
-        let rowIndex = 0;        
-
-        for (var i = 1; i<=numberOfDays; i++) {
-            row.push(
-                <div key = {i} style={{backgroundColor: "#eeeeee", width: calendarDayBoxWidth+"px", height: calendarDayBoxHeight+"px", marginRight: marginBetweenEachBox+"px", marginBottom: "10px", border: "solid"}}>{i}</div>
-            );
-            if (i % 7 === 0) {
-                tableArr.push(
-                    <div key = {rowIndex} style = {{display: "flex"}}>
-                        {row}
-                    </div>
-                )
-                rowIndex++;
-                row = [];
-              }
-            if (i === numberOfDays && i%7 !== 0) {
-                tableArr.push(
-                    <div key = {rowIndex} style = {{display: "flex"}}>
-                        {row}
-                    </div>
-                )
-                rowIndex++;
-                row = [];
-            }
-        }
-        return(
-            <div className = "mt-2 d-flex justify-content-center">
-                <div style = {{width: "fit-content"}}>
-                    <div style = {{height: calendarHeight+"px", padding: "10px", backgroundColor: "lightGreen"}}>
-                        <div className = "mb-2" style={{ display: "flex", justifyContent: "space-between" }}>
-                            {<Button onClick={prevMonth} buttonText={"Previous"}/>}
-                            <div>
-                                <h4>{monthName} {currYear}</h4>
-                            </div>
-                            {<Button onClick={nextMonth} style = {{marginLeft: "auto", float: "right"}} buttonText={"Next"}/>}
-                        </div>
-                        {tableArr}
-                    </div>
-                    
+    return (
+        <div> 
+            <div className="mt-2 d-flex justify-content-center">
+                <MonthlyCalendar setClickedDate = {setClickedDate} activities = {activities}/>
+                <div style={{marginTop: "75px", overflow: "scroll", width:"250px", height:125*6 + "px", backgroundColor:"white", border: "solid"}}>
+                    <h4 className="d-flex mb-3"><b>Dato: <u>{day} {month} {year}</u></b></h4>
+                    {sortedActivities.map(activity => {
+                        let activityDate = new Date(activity.date);
+                        let activityDay = (activityDate.getDate()).toLocaleString('en-US', {
+                            minimumIntegerDigits: 2,
+                            useGrouping: false
+                        })
+                        let activityMonth = (activityDate.getMonth()+1).toLocaleString('en-US', {
+                            minimumIntegerDigits: 2,
+                            useGrouping: false
+                        })
+                        if (activityDay === day && 
+                            activityMonth === month && 
+                            activityDate.getFullYear() === year) {
+                            return (
+                                <div className = "mb-5">
+                                    <h4>Kl. {activity.time} {activity.title}</h4>
+                                    <p>{activity.description}</p>
+                                </div>
+                            )
+                            
+                        }                 
+                    })}
                 </div>
             </div>
-        );
-    }
-    
-    return calendarTable();
+
+        </div>
+    )
 }
 
 export default Calendar;

@@ -1,5 +1,5 @@
-function SortActivities(activityArray) {
-    const sortedActivityArray = [activityArray].sort((a, b) => {
+function SortActivities({activityArray}) {
+    const sortedActivityArray = activityArray.sort((a, b) => {
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
         if (dateA < dateB) return -1;

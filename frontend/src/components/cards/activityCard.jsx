@@ -5,12 +5,12 @@ function ActivityCard(props) {
     const dayName = days[date.getDay()]
 
     const timeParts = props.time.split(':');
-    const newTime = new Date();
+    const time = new Date();
     const hours = parseInt(timeParts[0], 10);
     const minutes = parseInt(timeParts[1], 10);
-    newTime.setHours(hours);
-    newTime.setMinutes(minutes);
-    const formattedTime = newTime.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' });
+    time.setHours(hours);
+    time.setMinutes(minutes);
+    const formattedTime = time.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' });
 
     return (
         <div className="card w-100 mt-2">

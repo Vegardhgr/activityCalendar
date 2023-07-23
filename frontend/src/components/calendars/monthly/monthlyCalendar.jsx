@@ -5,7 +5,8 @@ function MonthlyCalendar({setClickedDate, activities}) {
     const [currYear, setCurrYear] = useState(new Date().getFullYear());
     const [currMonth, setCurrMonth] = useState(new Date().getMonth());
     const calendarDayBoxHeight = 125;
-    const calendarDayBoxWidth = 125;
+    const calendarDayBoxWidth = 160;
+    const calendarDayBoxPadding = 10;
     const calendarHeight = calendarDayBoxHeight*6 + 75;
     const monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -34,6 +35,24 @@ function MonthlyCalendar({setClickedDate, activities}) {
         } else {
             setCurrMonth(currMonth+1);
         }
+    }
+
+    function getActivity(currMonthActivities, i) {
+        
+        let currActivities = currMonthActivities.filter(activity =>
+            new Date(activity.date).getDate() === i)
+        
+        let activityDivs = [];
+        for (let j = 0; j < currActivities.length; j++) {
+            activityDivs.push(
+                <div className = "">
+                    <ul>
+                        <li>{currActivities[j].title}</li>
+                    </ul>
+                </div>
+            )
+        }
+        return activityDivs;
     }
 
     const calendarTable = ()=> {
@@ -65,15 +84,23 @@ function MonthlyCalendar({setClickedDate, activities}) {
                     style={{backgroundColor: "#eeeeee",
                     width: calendarDayBoxWidth+"px", 
                     height: calendarDayBoxHeight+"px",
+                    padding: calendarDayBoxPadding+"px",
                     borderBottomStyle: "solid",
                     borderLeftStyle: "solid",
                     borderRightStyle: i === numberOfDays ? "solid" : "",
                     borderTopStyle: i <= 7 ? "solid" : "",
-                    borderWidth:"thin"
+                    borderWidth:"thin",
+                    overflow: "scroll"
                     }}>
                         <div className = "mb-2">{i}. {dayNameArray[new Date(currYear, currMonth, i).getDay()]}</div>
-                        <div>{currMonthActivities.filter(activity =>
-                            new Date(activity.date).getDate() === i).length} aktiviteter</div>                                   
+                        <div>
+                            <u>{currMonthActivities.filter(activity =>
+                            new Date(activity.date).getDate() === i).length} aktiviteter:</u>
+                        </div>    
+                        <div>
+                            {getActivity(currMonthActivities, i)}
+                        </div>
+
                 </div>
             );
 
@@ -109,12 +136,23 @@ function MonthlyCalendar({setClickedDate, activities}) {
             <div className = "">
                 <div style = {{width: "fit-content"}}>
                     <div style = {{height: calendarHeight+"px", padding: "10 px", backgroundColor: "#b3f2b3"}}>
-                        <div className = "mb-2" style={{ display: "flex", justifyContent: "space-between" }}>
-                            {<Button onClick={prevMonth} buttonText={"Forrige"}/>}
+                        <div className = "mb-2" style={{ display: "flex"}}>
+                            <div className = "d-flex">
+                                <div onClick={prevMonth}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="32" fill="currentColor" class="bi bi-caret-left" viewBox="0 0 16 16">
+                                        <path d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
+                                    </svg>
+                                </div>
+                                <div onClick={nextMonth}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="32" fill="currentColor" class="bi bi-caret-right" viewBox="0 0 16 16">
+                                        <path d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
+                                    </svg>
+                                </div>
+                            </div>
                             <div>
                                 <h4>{monthName} {currYear}</h4>
                             </div>
-                            {<Button onClick={nextMonth} style = {{marginLeft: "auto", float: "right"}} buttonText={"Neste"}/>}
+                            
                         </div>
                         {dayNameArrayDivs}
                         {monthArr}

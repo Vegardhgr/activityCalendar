@@ -12,7 +12,7 @@ import (
 )
 
 type Activity struct {
-	Name        string `json:"name"`
+	Title       string `json:"title"`
 	Description string `json:"description"`
 	Time        string `json:"time"`
 	Date        string `json:"date"`
@@ -80,7 +80,7 @@ func activityHandlerGet(w http.ResponseWriter, r *http.Request) {
 
 		// Convert the CSV data to an Activity struct
 		activity := Activity{
-			Name:        row[0],
+			Title:       row[0],
 			Description: row[1],
 			Time:        row[2],
 			Date:        row[3],

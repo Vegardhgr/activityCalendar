@@ -24,7 +24,7 @@ function Calendar({activities}) {
         <div> 
             <div className="mt-2 d-flex justify-content-center">
                 <MonthlyCalendar setClickedDate = {setClickedDate} activities = {activities}/>
-                <div style={{marginTop: "75px", overflow: "scroll", width:"250px", height:125*6 + "px", backgroundColor:"white", border: "solid"}}>
+                <div style={{padding: "10px", marginTop: "75px", overflow: "scroll", width:"250px", height:125*6 + "px", backgroundColor:"white", border: "solid"}}>
                     <h4 className="d-flex mb-3"><b>Dato: <u>{day} {month} {year}</u></b></h4>
                     {sortedActivities.map(activity => {
                         let activityDate = new Date(activity.date);

@@ -1,0 +1,12 @@
+# Ignore IDE-specific files
+.idea/
+go.mod
+activities.csv
+
+# Ignore sensitive files
+backend/activities.csv
+
+# Ignore build artifacts (add more if needed)
+*.exe
+*.out
+*.dll

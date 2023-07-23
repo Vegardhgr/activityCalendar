@@ -6,14 +6,12 @@ import axios from "axios";
 function App() {
   document.body.style.backgroundColor = "#e8f3f1";
   const [activities, setActivities] = useState([]);
-  var defaultActivities = []
 
   const fetchTasks = async () => {
     try {
       const response = await axios.get("/activityHandler");
-      console.log("Reeeeeeesponse: " + response)
+      console.log(response)
       if (activities.length===0) {
-        console.log(response.data);
         setActivities(response.data);
       }      
     } catch (error) {
@@ -23,6 +21,8 @@ function App() {
   useEffect(() => {
     fetchTasks();
   }, []); 
+
+  console.log("Response date: " + activities[0])
 
     /*defaultActivities = [
     {

@@ -1,11 +1,30 @@
 import NavBar from './components/navBar/navigationBar';
 import Router from './router/router';
 import { useState, useEffect } from 'react';
+import axios from "axios";
 
 function App() {
   document.body.style.backgroundColor = "#e8f3f1";
   const [activities, setActivities] = useState([]);
-  const defaultActivities = [
+  var defaultActivities = []
+
+  const fetchTasks = async () => {
+    try {
+      const response = await axios.get("/activityHandler");
+      console.log("Reeeeeeesponse: " + response)
+      if (activities.length===0) {
+        console.log(response.data);
+        setActivities(response.data);
+      }      
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    };
+  }
+  useEffect(() => {
+    fetchTasks();
+  }, []); 
+
+    /*defaultActivities = [
     {
         title: "Rustadsaga",
         description: "Tur til Rustadsaga",
@@ -106,11 +125,11 @@ function App() {
       sunday: false
   }
 }, 
-  ]
+  ]*/
 
-  if (activities.length===0) {
+  /*if (activities.length===0) {
     setActivities([...defaultActivities]);
-  }
+  }*/
 
   return (
     <div>

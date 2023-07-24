@@ -1,13 +1,15 @@
 import {useEffect, useRef, useState} from "react";
-import Button from '../../utils/button';
+import WeekCount from '../weekCount.jsx';
+import CountMondays from "./utils/countMondays.jsx";
 
 function MonthlyCalendar({setClickedDate, activities}) {
     const [currYear, setCurrYear] = useState(new Date().getFullYear());
     const [currMonth, setCurrMonth] = useState(new Date().getMonth());
-    const calendarDayBoxHeight = 125;
     const calendarDayBoxWidth = 160;
     const calendarDayBoxPadding = 10;
-    const calendarHeight = calendarDayBoxHeight*6 + 75;
+    const calendarHeight = 135*5 + 75;
+    const rowsInMonthArr = CountMondays(currYear, currMonth);
+
     const monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
@@ -37,6 +39,11 @@ function MonthlyCalendar({setClickedDate, activities}) {
         }
     }
 
+    function calendarDayBoxHeightFunc() {
+        const calendarDayBoxHeight = (135 / rowsInMonthArr * 5);
+        return calendarDayBoxHeight;
+    }
+
     function getActivity(currMonthActivities, i) {
         
         let currActivities = currMonthActivities.filter(activity =>
@@ -56,13 +63,14 @@ function MonthlyCalendar({setClickedDate, activities}) {
     }
 
     const calendarTable = ()=> {
-        const monthArr = [];
         const dayNameArrayDivs = [];
+        let monthArr = [];
         let weekArr = [];
-        let rowIndex = 0;   
-        
+        let rowIndex = 0; 
+                
         const currMonthActivities = activities.filter(element => 
-            new Date(element.date).getMonth() === currMonth
+                new Date(element.date).getMonth() === currMonth &&
+                new Date(element.date).getFullYear() === currYear
         )
 
         const dayNameArray = ['Søn', 'Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør'];
@@ -83,7 +91,7 @@ function MonthlyCalendar({setClickedDate, activities}) {
                 <div key = {i} onClick={() => setClickedDate([i, currMonth+1, currYear])}
                     style={{backgroundColor: "#eeeeee",
                     width: calendarDayBoxWidth+"px", 
-                    height: calendarDayBoxHeight+"px",
+                    height: calendarDayBoxHeightFunc()+"px",
                     padding: calendarDayBoxPadding+"px",
                     borderBottomStyle: "solid",
                     borderLeftStyle: "solid",
@@ -109,7 +117,7 @@ function MonthlyCalendar({setClickedDate, activities}) {
                 <div key = {keyGenerator(j)}
                 style={{backgroundColor: "#b3f2b3",
                 width: calendarDayBoxWidth+"px", 
-                height: calendarDayBoxHeight+"px",
+                height: calendarDayBoxHeightFunc()+"px",
                 }}></div>)
                 
                 if (i === 1) {

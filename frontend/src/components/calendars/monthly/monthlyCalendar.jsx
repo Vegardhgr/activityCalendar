@@ -5,7 +5,7 @@ import CountMondays from "./utils/countMondays.jsx";
 function MonthlyCalendar({setClickedDate, activities}) {
     const [currYear, setCurrYear] = useState(new Date().getFullYear());
     const [currMonth, setCurrMonth] = useState(new Date().getMonth());
-    const calendarDayBoxWidth = 160;
+    const calendarDayBoxWidth = 200;
     const calendarDayBoxPadding = 10;
     const calendarHeight = 135*5 + 75;
     const rowsInMonthArr = CountMondays(currYear, currMonth);
@@ -20,7 +20,6 @@ function MonthlyCalendar({setClickedDate, activities}) {
         setNumberOfDays(new Date(currYear, currMonth+1, 0).getDate())
         setMonthName(monthNames[currMonth]);
     }, [currYear, currMonth]);
-
     function prevMonth() {
         if (currMonth===0) {
             setCurrMonth(11);
@@ -44,10 +43,11 @@ function MonthlyCalendar({setClickedDate, activities}) {
         return calendarDayBoxHeight;
     }
 
-    function getActivity(currMonthActivities, i) {
+    function getActivity(currMonthActivities, i, month) {
         
         let currActivities = currMonthActivities.filter(activity =>
-            new Date(activity.date).getDate() === i)
+            new Date(activity.date).getDate() === i &&
+            new Date(activity.date).getMonth() === month)
         
         let activityDivs = [];
         for (let j = 0; j < currActivities.length; j++) {
@@ -69,7 +69,8 @@ function MonthlyCalendar({setClickedDate, activities}) {
         let rowIndex = 0; 
                 
         const currMonthActivities = activities.filter(element => 
-                new Date(element.date).getMonth() === currMonth &&
+                new Date(element.date).getMonth() >= currMonth-1 &&
+                new Date(element.date).getMonth() <= currMonth+1 &&
                 new Date(element.date).getFullYear() === currYear
         )
 
@@ -87,6 +88,10 @@ function MonthlyCalendar({setClickedDate, activities}) {
         }
 
         for (let i = 1; i<=numberOfDays; i++) {
+            const filteredActivities = currMonthActivities.filter(activity =>
+                new Date(activity.date).getDate() === i &&
+                new Date(activity.date).getMonth() === currMonth
+            );
             const dayBox = (
                 <div key = {i} onClick={() => setClickedDate([i, currMonth+1, currYear])}
                     style={{backgroundColor: "#eeeeee",
@@ -95,23 +100,26 @@ function MonthlyCalendar({setClickedDate, activities}) {
                     padding: calendarDayBoxPadding+"px",
                     borderBottomStyle: "solid",
                     borderLeftStyle: "solid",
-                    borderRightStyle: i === numberOfDays ? "solid" : "",
                     borderTopStyle: i <= 7 ? "solid" : "",
                     borderWidth:"thin",
                     overflow: "scroll"
                     }}>
-                        <div className = "mb-2">{i}. {dayNameArray[new Date(currYear, currMonth, i).getDay()]}</div>
+                        <div className = "mb-2 d-flex justify-content-center">
+                            <b>
+                                {i}{i===1 ? ". " + monthNames[new Date(currYear, currMonth, i).getMonth()] : ""}
+                            </b>
+                        </div>
                         <div>
-                            <u>{currMonthActivities.filter(activity =>
-                            new Date(activity.date).getDate() === i).length} aktiviteter:</u>
+                            {filteredActivities.length > 0 ? 
+                                <u>{filteredActivities.length} aktiviteter:</u> : ""}
                         </div>    
                         <div>
-                            {getActivity(currMonthActivities, i)}
+                            {getActivity(currMonthActivities, i, currMonth)}
                         </div>
 
                 </div>
             );
-
+            
             const keyGenerator = (j) => j*100;
             const emptyDiv = (j) => (
                 <div key = {keyGenerator(j)}
@@ -120,26 +128,94 @@ function MonthlyCalendar({setClickedDate, activities}) {
                 height: calendarDayBoxHeightFunc()+"px",
                 }}></div>)
                 
-                if (i === 1) {
-                    for (let j = 0; j < ((new Date(currYear, currMonth, i).getDay()+6)%7); j++) {
-                        weekArr.push(emptyDiv(i - j)); // Fix the indexing
-                    }
+            /*Fills in empty space at the beginning of the calendar, if any,
+              with dates from the previous month*/
+            if (i === 1) {
+                for (let j = ((new Date(currYear, currMonth, i).getDay()+6)%7); j > 0; j--) {
+                    const filteredActivitiesPrevMonth = currMonthActivities.filter(activity =>
+                        new Date(activity.date).getDate() ===
+                        new Date(currYear, currMonth, new Date(currYear, currMonth, 1).getDate() - j).getDate()
+                        &&
+                        new Date(activity.date).getMonth() === currMonth-1
+                    )
+                    //weekArr.push(emptyDiv(i - j)); // Fix the indexing
+                    weekArr.push(
+                        <div key = {i-j} onClick={() => setClickedDate([new Date(currYear, currMonth, 0).getDate()-j+1, currMonth, currYear])}
+                            style={{backgroundColor: "#eeeeee",
+                            width: calendarDayBoxWidth+"px", 
+                            height: calendarDayBoxHeightFunc()+"px",
+                            padding: calendarDayBoxPadding+"px",
+                            borderLeftStyle: "solid",
+                            borderTopStyle: i <= 7 ? "solid" : "",
+                            borderWidth:"thin",
+                            overflow: "scroll"
+                            }}>
+                                <div className = "mb-2 d-flex justify-content-center">
+                                    {new Date(currYear, currMonth, new Date(currYear, currMonth, 1).getDate() - j).getDate()}
+                                </div>
+                                <div>
+                                    {filteredActivitiesPrevMonth.length > 0 ? 
+                                        <u>{filteredActivitiesPrevMonth.length} aktiviteter:</u> : ""}
+                                </div>    
+                                <div>
+                                    {getActivity(filteredActivitiesPrevMonth, new Date(currYear, currMonth, (new Date(currYear, currMonth, 1).getDate() - j)).getDate(), currMonth-1)}
+                                </div>
+                        </div>
+                    )   
                 }
-                weekArr.push(dayBox);
-           
+            }
+            weekArr.push(dayBox);
+
+            /*Fills in empty space, if any, at the end of the calendar, with dates from the next month*/
             if (i === numberOfDays || weekArr.length%7 === 0) {
                 monthArr.push(
                     <div key = {rowIndex} style = {{display: "flex"}}>
                         {weekArr}
                     </div>
                 )
+                let dayInNextMonth = 0;
                 for (let j = weekArr.length; j % 7 !== 0; j++) {
-                    weekArr.push(emptyDiv);
+                    dayInNextMonth += 1;
+                    const filteredActivitiesNextMonth = currMonthActivities.filter(activity =>
+                        new Date(activity.date).getMonth() === currMonth+1 &&
+                        new Date(activity.date).getDate() === new Date(currYear,currMonth+1,dayInNextMonth).getDate()
+                    )
+                    //weekArr.push(emptyDiv);
+                    weekArr.push(
+                        (
+                            <div key = {i+j} onClick={() => setClickedDate([new Date(currYear, currMonth+1,1).getDate()+j-1, currMonth+2, currYear])}
+                                style={{backgroundColor: "#eeeeee",
+                                width: calendarDayBoxWidth+"px", 
+                                height: calendarDayBoxHeightFunc()+"px",
+                                padding: calendarDayBoxPadding+"px",
+                                borderLeftStyle: "solid",
+                                borderTopStyle: i <= 7 ? "solid" : "",
+                                borderBottomStyle: "solid",
+                                borderWidth:"thin",
+                                overflow: "scroll"
+                                }}>
+                                    <div className = "mb-2 d-flex justify-content-center">
+                                        {new Date(currYear, currMonth+1, new Date(currYear, currMonth+1, dayInNextMonth).getDate()).getDate()} 
+                                        {new Date(currYear, currMonth+1, new Date(currYear, currMonth+1, dayInNextMonth).getDate()).getDate()===1 ?
+                                        currMonth === 11 ? ". " + monthNames[new Date(currYear+1, 0, i).getMonth() ] :
+                                        ". " + monthNames[new Date(currYear, currMonth+1, 1).getMonth()] : ""}
+                                    </div>
+                                    <div>
+                                        {filteredActivitiesNextMonth.length > 0 ? 
+                                        <u>{filteredActivitiesNextMonth.length} aktiviteter:</u> : ""}
+                                    </div>
+                                    <div>
+                                        {getActivity(filteredActivitiesNextMonth, new Date(currYear, currMonth+1, (new Date(currYear, currMonth+1, 1).getDate() + dayInNextMonth-1)).getDate(), currMonth+1)}
+                                    </div> 
+                            </div>
+                        )
+                    )
                 }
                 rowIndex++;
                 weekArr = [];
             }
         }
+
         return( 
             <div className = "">
                 <div style = {{width: "fit-content"}}>
@@ -165,7 +241,7 @@ function MonthlyCalendar({setClickedDate, activities}) {
                         {dayNameArrayDivs}
                         {monthArr}
                     </div>
-                    
+
                 </div>
             </div>
         );

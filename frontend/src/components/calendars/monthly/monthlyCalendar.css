@@ -1,0 +1,27 @@
+/* monthlyCalendar.css */ 
+    @keyframes opacityIn {
+        from {
+            opacity: 0.7;
+        }
+        to {
+            opacity: 1;
+        }
+    
+    }   
+    @keyframes opacityOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0.7;
+        }
+    } 
+
+  .opacity-in {
+    animation: opacityIn 0.6s ease-out;
+  }
+
+  .opacity-out {
+    animation: opacityOut 0.6s ease-in;
+  }
+  

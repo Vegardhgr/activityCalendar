@@ -1,5 +1,6 @@
 import { React, useEffect, useRef, useState } from 'react';
 import GetDayName from '../components/utils/getDayNames';
+import axios from "axios";
 
 function NewActivity({setActivities}) {
     const hoursInputRef = useRef(null);
@@ -41,14 +42,11 @@ function NewActivity({setActivities}) {
         if (month === 12) {
             month = 0;
             year += 1;
-        }
-
-        
-        
+        }        
       
         // Adding leading 0 if the day or month
         // is one digit value
-        month = month.length === 1 ? 
+        month = month.length === 1 ?
             month.padStart('2', '0') : month;
       
         day = day.length === 1 ? 
@@ -58,12 +56,27 @@ function NewActivity({setActivities}) {
         return (`${year}/${month}/${day}`);
     }
       
+    function convertToTwoDigits(activityTime) {
+        let [hours, minutes] = activityTime.split(':');    
+
+        if (hours.length === 1) {
+            hours = hours.padStart('2', '0')
+        }
+        if (minutes.length === 1) {
+            minutes = minutes.padStart('2', '0')
+        }
+        return [hours, minutes]
+    }
 
     function getActivity() {
+        const [hours, minutes] = convertToTwoDigits(activityTime)
+
+        console.log(hours, " : " , minutes)
+
         const activityArray = [{
             title: activityNameRef.current.value,
             description: descriptionRef.current.value,
-            time: activityTime,
+            time: `${hours}:${minutes}`,
             date: activityDate,
             repeat: {
                 monday: monday,
@@ -79,12 +92,13 @@ function NewActivity({setActivities}) {
         if (repeatActivityCheckBoxChecked) {
             for (var i = 1; i<=30; i++) {
                 const dateOfRepeatedActivity = new Date(getDateByIncrement(activityDate, i));
-                if (dayNames[(dateOfRepeatedActivity.getDay()-1)%7]) {
+                const dayOfWeek = (dateOfRepeatedActivity.getDay() + 6) % 7; // Convert Sunday (0) to index 6
+                if (dayNames[dayOfWeek]) {
                     activityArray.push(
                         {
                             title: activityNameRef.current.value,
                             description: descriptionRef.current.value,
-                            time: activityTime,
+                            time: `${hours}:${minutes}`,
                             date: dateOfRepeatedActivity,
                             repeat: {
                                 monday: monday,
@@ -104,12 +118,21 @@ function NewActivity({setActivities}) {
         return activityArray;
     }
 
-    function submitHandler(event) {
+    async function submitHandler(event) {
         event.preventDefault();
-        var activities = [];
-        activities = getActivity();
+        var activities = getActivity();
         setActivities(existingActivities => 
             [...existingActivities, ...activities]);
+
+        try {
+            await axios.post('/activityHandler', activities, {
+            headers: {
+                'Content-Type': 'application/json'
+              }});
+            console.log('Data sent successfully');
+          } catch (error) {
+            console.error('Error sending data:', error);
+        }
     }
 
     const handleInputChange = () => {

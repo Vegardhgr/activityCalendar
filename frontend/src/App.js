@@ -10,10 +10,10 @@ function App() {
   const fetchTasks = async () => {
     try {
       const response = await axios.get("/activityHandler");
-      console.log(response)
-      if (activities.length===0) {
+      if (response.data !== null && activities.length===0) {
         setActivities(response.data);
-      }      
+        console.log("resp dataa: " + response.data)
+      } 
     } catch (error) {
       console.error("Error fetching tasks:", error);
     };
@@ -22,114 +22,6 @@ function App() {
     fetchTasks();
   }, []); 
 
-  console.log("Response date: " + activities[0])
-
-    /*defaultActivities = [
-    {
-        title: "Rustadsaga",
-        description: "Tur til Rustadsaga",
-        time: "09:00",
-        date: "07/16/2023",
-        repeat: {
-            monday: false,
-            tuesday: false,
-            wednesday: false,
-            thursday: false,
-            friday: false,
-            saturday: false,
-            sunday: false
-        }
-    }, 
-    {
-        title: "Sarabråten",
-        description: "Tur til Sarabråten",
-        time: "10:00",
-        date: "07/16/2023",
-        repeat: {
-            monday: false,
-            tuesday: false,
-            wednesday: false,
-            thursday: false,
-            friday: false,
-            saturday: false,
-            sunday: false
-        }
-    }, {
-      title: "Rustadsaga",
-      description: "Tur til Rustadsaga",
-      time: "09:00",
-      date: "07/16/2023",
-      repeat: {
-          monday: false,
-          tuesday: false,
-          wednesday: false,
-          thursday: false,
-          friday: false,
-          saturday: false,
-          sunday: false
-      }
-  }, {
-    title: "Rustadsaga",
-    description: "Tur til Rustadsaga",
-    time: "09:00",
-    date: "07/16/2023",
-    repeat: {
-        monday: false,
-        tuesday: false,
-        wednesday: false,
-        thursday: false,
-        friday: false,
-        saturday: false,
-        sunday: false
-    }
-}, {
-  title: "Rustadsaga",
-  description: "Tur til Rustadsaga",
-  time: "09:00",
-  date: "07/16/2023",
-  repeat: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: false,
-      saturday: false,
-      sunday: false
-  }
-}, {
-  title: "Rustadsaga",
-  description: "Tur til Rustadsaga",
-  time: "09:00",
-  date: "07/16/2023",
-  repeat: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: false,
-      saturday: false,
-      sunday: false
-  }
-}, {
-  title: "Rustadsaga",
-  description: "Tur til Rustadsaga",
-  time: "09:00",
-  date: "07/16/2023",
-  repeat: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: false,
-      saturday: false,
-      sunday: false
-  }
-}, 
-  ]*/
-
-  /*if (activities.length===0) {
-    setActivities([...defaultActivities]);
-  }*/
 
   return (
     <div>

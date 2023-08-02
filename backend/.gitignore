@@ -5,6 +5,7 @@ activities.csv
 
 # Ignore sensitive files
 backend/activities.csv
+dbcredentials.env
 
 # Ignore build artifacts (add more if needed)
 *.exe

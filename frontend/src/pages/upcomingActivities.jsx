@@ -18,17 +18,25 @@ function UpcomingActivities({ activities }) {
           );
     });
 
+    function getUpcommingActivities() {
+        const upCommingActivities = (
+            sortedActivities.map((activity, index) =>
+                <ActivityCard key = {index}  time = {activity.time} date = {activity.date}>
+                    <h5 key={activity.id} className="card-title"><b>{activity.title}</b></h5>
+                    <p className="card-text">{activity.description}</p>
+                </ActivityCard>
+            )
+        )
+        return upCommingActivities
+    }
+
     return (
         <div className = "row justify-content-center ">
             <div className = "col-md-8">
                 <h2><u>Kommende aktiviteter</u></h2>    
                     {sortedActivities.length !== 0 ? 
-                        sortedActivities.map(activity =>
-                            <ActivityCard time = {activity.time} date = {activity.date}>
-                                <h5 class="card-title"><b>{activity.title}</b></h5>
-                                <p class="card-text">{activity.description}</p>
-                            </ActivityCard>
-                        ) : <div><h4>Foreløpig ingen kommende aktiviteter</h4></div>
+                        getUpcommingActivities()
+                        : <div><h4>Foreløpig ingen kommende aktiviteter</h4></div>
                     }
             </div>
         </div>

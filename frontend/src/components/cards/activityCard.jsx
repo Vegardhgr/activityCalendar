@@ -14,7 +14,11 @@ function ActivityCard(props) {
 
     return (
         <div className="card w-100 mt-2">
-            <h5 class="card-header"><b><u>{dayName}</u></b> den <b><u>{formattedDate}</u></b> klokken <b><u>{formattedTime}</u></b></h5>
+            <h5 className="card-header">
+                <b><u>{dayName}</u></b> 
+                <span> den </span><b><u>{formattedDate}</u></b> 
+                <span> klokken </span><b><u>{formattedTime}</u></b>
+            </h5>
             <div className="card-body">
                 {props.children}
             </div>

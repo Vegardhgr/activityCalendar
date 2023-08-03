@@ -9,16 +9,11 @@ function UpcomingActivities({ activities }) {
     sortedActivities = sortedActivities.filter(activity => {
         const activityDate = new Date(activity.date);
         return (
-            activityDate.getFullYear() > timeNow.getFullYear() ||
-            (activityDate.getFullYear() === timeNow.getFullYear() &&
-              activityDate.getMonth() > timeNow.getMonth()) ||
-            (activityDate.getFullYear() === timeNow.getFullYear() &&
-              activityDate.getMonth() === timeNow.getMonth() &&
-              activityDate.getDate() >= timeNow.getDate())
-          );
+            activityDate >= timeNow
+        );
     });
 
-    function getUpcommingActivities() {
+    function getUpCommingActivities() {
         const upCommingActivities = (
             sortedActivities.map((activity, index) =>
                 <ActivityCard key = {index}  time = {activity.time} date = {activity.date}>
@@ -30,12 +25,14 @@ function UpcomingActivities({ activities }) {
         return upCommingActivities
     }
 
+    const upCommingActivities = getUpCommingActivities();
+
     return (
         <div className = "row justify-content-center ">
             <div className = "col-md-8">
                 <h2><u>Kommende aktiviteter</u></h2>    
-                    {sortedActivities.length !== 0 ? 
-                        getUpcommingActivities()
+                    {upCommingActivities.length !== 0 ? 
+                        upCommingActivities
                         : <div><h4>Foreløpig ingen kommende aktiviteter</h4></div>
                     }
             </div>

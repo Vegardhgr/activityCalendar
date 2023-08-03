@@ -1,6 +1,9 @@
 import {useEffect, useState} from "react";
 import CountMondays from "./utils/countMondays.jsx";
 import './monthlyCalendar.css';
+import GetDayCurrentMonth from "./utils/getDayCurrentMonth.jsx";
+import GetDayPrevMonth from "./utils/getDayPrevMonth.jsx";
+import GetDayNextMonth from "./utils/getDayNextMonth.jsx";
 
 function MonthlyCalendar({setClickedDate, activities}) {
     const [currYear, setCurrYear] = useState(new Date().getFullYear());
@@ -61,7 +64,7 @@ function MonthlyCalendar({setClickedDate, activities}) {
         let activityDivs = [];
         for (let j = 0; j < currActivities.length; j++) {
             activityDivs.push(
-                <div className = "">
+                <div>
                     <ul>
                         <li>{currActivities[j].title}</li>
                     </ul>
@@ -107,68 +110,18 @@ function MonthlyCalendar({setClickedDate, activities}) {
             );
 
 
-            const dayBox = (
-                <div key = {i} onClick={() => setClickedDate([i, currMonth+1, currYear])}
-                    style={{backgroundColor: "#eeeeee",
-                    width: calendarDayBoxWidth+"px", 
-                    height: calendarDayBoxHeightFunc()+"px",
-                    padding: calendarDayBoxPadding+"px",
-                    borderBottomStyle: "solid",
-                    borderLeftStyle: "solid",
-                    borderTopStyle: monthArr.length === 0 ? "solid" : "", //First row (week) in the calendar
-                    borderWidth:"thin",
-                    overflow: "scroll"
-                }}>
-                        <div className = "mb-2 d-flex justify-content-center">
-                            <b>
-                                {i}{i===1 ? ". " + monthNames[new Date(currYear, currMonth, i).getMonth()] : ""}
-                            </b>
-                        </div>
-                        <div style = {{backgroundColor: "lightgreen"}} >
-                            {filteredActivities.length > 0 ? 
-                                <u>{filteredActivities.length} aktiviteter:</u> : ""}
-                        </div>    
-                        <div>
-                            {getActivity(currMonthActivities, i, currMonth)}
-                        </div>
-
-                </div>
-            );
+            const dayBox = 
+                GetDayCurrentMonth(i, setClickedDate, currMonth, currYear, calendarDayBoxHeightFunc, getActivity, 
+                    currMonthActivities, filteredActivities, monthNames, calendarDayBoxWidth, calendarDayBoxPadding, monthArr)
+            
                             
             /*Fills in empty space at the beginning of the calendar, if any,
               with dates from the previous month*/
             if (i === 1) {
-                for (let j = ((new Date(currYear, currMonth, i).getDay()+6)%7); j > 0; j--) {
-                    const filteredActivitiesPrevMonth = currMonthActivities.filter(activity =>
-                        new Date(activity.date).getDate() ===
-                        new Date(currYear, currMonth, new Date(currYear, currMonth, 1).getDate() - j).getDate()
-                        &&
-                        new Date(activity.date).getMonth() === currMonth-1
-                    )
-                    weekArr.push(
-                        <div key = {i-j} onClick={() => setClickedDate([new Date(currYear, currMonth, 0).getDate()-j+1, currMonth, currYear])}
-                            style={{backgroundColor: "#eeeeee",
-                            width: calendarDayBoxWidth+"px", 
-                            height: calendarDayBoxHeightFunc()+"px",
-                            padding: calendarDayBoxPadding+"px",
-                            borderBottomStyle: "solid",
-                            borderLeftStyle: "solid",
-                            borderTopStyle: "solid",
-                            borderWidth:"thin",
-                            overflow: "scroll"
-                            }}>
-                                <div className = "mb-2 d-flex justify-content-center">
-                                    {new Date(currYear, currMonth, new Date(currYear, currMonth, 1).getDate() - j).getDate()}
-                                </div>
-                                <div style = {{backgroundColor: "lightgray"}}>
-                                    {filteredActivitiesPrevMonth.length > 0 ? 
-                                        <u>{filteredActivitiesPrevMonth.length} aktiviteter:</u> : ""}
-                                </div>    
-                                <div>
-                                    {getActivity(filteredActivitiesPrevMonth, new Date(currYear, currMonth, (new Date(currYear, currMonth, 1).getDate() - j)).getDate(), currMonth-1)}
-                                </div>
-                        </div>
-                    )   
+                const dayDivsInPrevMonth = GetDayPrevMonth(setClickedDate, currYear, currMonth, calendarDayBoxWidth,
+                        calendarDayBoxHeightFunc, calendarDayBoxPadding, getActivity, currMonthActivities)  
+                for (var j = 0; j < dayDivsInPrevMonth.length; j++) {
+                    weekArr.push(dayDivsInPrevMonth[j]) 
                 }
             }
             weekArr.push(dayBox);
@@ -179,47 +132,23 @@ function MonthlyCalendar({setClickedDate, activities}) {
                     <div key = {rowIndex} style = {{display: "flex"}}>
                         {weekArr}
                     </div>
-                )
-                var dayInNextMonth = 0;
-                for (let j = weekArr.length; j % 7 !== 0; j++) {
-                    dayInNextMonth += 1;
-                    const dayInNext = dayInNextMonth-1;
-                    const filteredActivitiesNextMonth = currMonthActivities.filter(activity =>
-                        new Date(activity.date).getMonth() === currMonth+1 &&
-                        new Date(activity.date).getDate() === new Date(currYear,currMonth+1,dayInNextMonth).getDate()
-                    )
-                    weekArr.push((
-                        <div key = {i+j+10} onClick={() => setClickedDate([new Date(currYear, currMonth+1,1).getDate()+dayInNext, currMonth+2, currYear])}
-                            style={{backgroundColor: "#eeeeee",
-                            width: calendarDayBoxWidth+"px", 
-                            height: calendarDayBoxHeightFunc()+"px",
-                            padding: calendarDayBoxPadding+"px",
-                            borderLeftStyle: "solid",
-                            borderTopStyle: i <= 7 ? "solid" : "",
-                            borderBottomStyle: "solid",
-                            borderWidth:"thin",
-                            overflow: "scroll"
-                            }}>
-                                <div className = "mb-2 d-flex justify-content-center">
-                                    {new Date(currYear, currMonth+1, new Date(currYear, currMonth+1, dayInNextMonth).getDate()).getDate()} 
-                                    {new Date(currYear, currMonth+1, new Date(currYear, currMonth+1, dayInNextMonth).getDate()).getDate()===1 ?
-                                    currMonth === 11 ? ". " + monthNames[new Date(currYear+1, 0, i).getMonth() ] :
-                                    ". " + monthNames[new Date(currYear, currMonth+1, 1).getMonth()] : ""}
-                                </div>
-                                <div>
-                                    {filteredActivitiesNextMonth.length > 0 ? 
-                                    <u>{filteredActivitiesNextMonth.length} aktiviteter:</u> : ""}
-                                </div>
-                                <div>
-                                    {getActivity(filteredActivitiesNextMonth, new Date(currYear, currMonth+1, (new Date(currYear, currMonth+1, 1).getDate() + dayInNextMonth-1)).getDate(), currMonth+1)}
-                                </div> 
-                        </div>
-                    ))
+                )            
+                if (i === numberOfDays) {
+                    const dayDivsInNextMonth = (
+                        GetDayNextMonth(i, setClickedDate, currYear, currMonth, calendarDayBoxWidth,
+                            calendarDayBoxHeightFunc, calendarDayBoxPadding, getActivity, monthNames, weekArr,
+                            currMonthActivities)
+                    );
+                    for (var j = 0; j < dayDivsInNextMonth.length; j++) {
+                        weekArr.push(dayDivsInNextMonth[j])
+                    } 
                 }
+            
                 rowIndex++;
                 weekArr = [];
             }
         }
+        
 
 
 

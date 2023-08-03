@@ -1,5 +1,4 @@
 function SortActivities({activityArray}) {
-    console.log("aciaciaci: " + activityArray)
     if (activityArray.length !== 0) {
         const sortedActivityArray = activityArray.sort((a, b) => {
             const dateA = new Date(a.date);

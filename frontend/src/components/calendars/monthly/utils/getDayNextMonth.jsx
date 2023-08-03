@@ -29,7 +29,7 @@ function GetDayNextMonth(i, setClickedDate, currYear, currMonth, calendarDayBoxW
                             currMonth === 11 ? ". " + monthNames[new Date(currYear+1, 0, i).getMonth() ] :
                             ". " + monthNames[new Date(currYear, currMonth+1, 1).getMonth()] : ""}
                         </div>
-                        <div>
+                        <div style = {{backgroundColor:"lightgray"}}>
                             {filteredActivitiesNextMonth.length > 0 ? 
                             <u>{filteredActivitiesNextMonth.length} aktiviteter:</u> : ""}
                         </div>

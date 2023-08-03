@@ -118,9 +118,9 @@ func activityHandlerDBGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func activityHandlerDBPost(w http.ResponseWriter, r *http.Request) {
-	activities := make([]Activity, 0)
+	var activity Activity
 
-	err := json.NewDecoder(r.Body).Decode(&activities)
+	err := json.NewDecoder(r.Body).Decode(&activity)
 
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -131,38 +131,33 @@ func activityHandlerDBPost(w http.ResponseWriter, r *http.Request) {
 	db, err := sql.Open("mysql", os.Getenv("DB_USERNAME")+":"+os.Getenv("DB_PASSWORD")+"@tcp("+
 		os.Getenv("DB_HOSTNAME")+")/"+os.Getenv("DB_NAME"))
 
-	for _, activity := range activities {
-		resultActivityTime, err := db.Exec("INSERT INTO activity_time (time, date)"+
-			"VALUES (?, ?)", activity.Time, activity.Date)
-		if err != nil {
-			fmt.Println("Error inserting into activity_time table", err.Error())
-			return
-		}
-		timeId, err := resultActivityTime.LastInsertId()
-
-		if err != nil {
-			fmt.Println("Error with time_id", err.Error())
-			return
-		}
-
-		monday := activity.Repeat.Monday
-		tuesday := activity.Repeat.Tuesday
-		wednesday := activity.Repeat.Wednesday
-		thursday := activity.Repeat.Thursday
-		friday := activity.Repeat.Friday
-		saturday := activity.Repeat.Saturday
-		sunday := activity.Repeat.Sunday
-
-		_, err = db.Exec("INSERT INTO activity (title, description, time_id, "+
-			"monday, tuesday, wednesday, thursday, friday, saturday, sunday)"+
-			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", activity.Title, activity.Description, timeId,
-			monday, tuesday, wednesday, thursday, friday, saturday, sunday)
-
-		if err != nil {
-			fmt.Println("Error inserting into activity table", err.Error())
-			return
-		}
+	resultActivityTime, err := db.Exec("INSERT INTO activity_time (time, date)"+
+		"VALUES (?, ?)", activity.Time, activity.Date)
+	if err != nil {
+		fmt.Println("Error inserting into activity_time table", err.Error())
+		return
 	}
+	timeId, err := resultActivityTime.LastInsertId()
+	if err != nil {
+		fmt.Println("Error with time_id", err.Error())
+		return
+	}
+	monday := activity.Repeat.Monday
+	tuesday := activity.Repeat.Tuesday
+	wednesday := activity.Repeat.Wednesday
+	thursday := activity.Repeat.Thursday
+	friday := activity.Repeat.Friday
+	saturday := activity.Repeat.Saturday
+	sunday := activity.Repeat.Sunday
+	_, err = db.Exec("INSERT INTO activity (title, description, time_id, "+
+		"monday, tuesday, wednesday, thursday, friday, saturday, sunday)"+
+		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", activity.Title, activity.Description, timeId,
+		monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+	if err != nil {
+		fmt.Println("Error inserting into activity table", err.Error())
+		return
+	}
+
 }
 
 func activityHandlerCSVGet(w http.ResponseWriter, r *http.Request) {

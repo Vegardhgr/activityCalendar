@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useState} from "react";
 import MonthlyCalendar from "../components/calendars/monthly/monthlyCalendar";
 import SortActivities from "../components/utils/sortActivities";
 

@@ -73,14 +73,14 @@ func activityHandlerDBGet(w http.ResponseWriter, r *http.Request) {
 	for activity.Next() && activityTime.Next() {
 		//Attributes in activity table
 		var title, description string
-		var ac_id, time_id int
+		var activityId, timeId int
 		var monday, tuesday, wednesday, thursday, friday, saturday, sunday bool
 
 		//Attributes in activity_time table
 		var acTimeId int
 		var time, date string
 
-		err = activity.Scan(&ac_id, &title, &description, &time_id, &monday, &tuesday, &wednesday, &thursday, &friday, &saturday, &sunday)
+		err = activity.Scan(&activityId, &title, &description, &timeId, &monday, &tuesday, &wednesday, &thursday, &friday, &saturday, &sunday)
 
 		if err != nil {
 			fmt.Println("Error scanning activity:", err.Error())
@@ -118,31 +118,9 @@ func activityHandlerDBGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func activityHandlerDBPost(w http.ResponseWriter, r *http.Request) {
-	// Get the absolute path to the current directory of activityHandler.go
-	currentDir, err := os.Getwd()
-	if err != nil {
-		panic(err) // Handle the error appropriately in your code
-	}
-	// Open the CSV file
-	file, err := os.OpenFile(filepath.Join(currentDir, "../backend/activities.csv"), os.O_APPEND|os.O_WRONLY, os.ModeAppend)
-
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-			fmt.Println("Error closing file: ", err)
-			return
-		}
-	}(file)
-
-	writer := csv.NewWriter(file)
-
 	activities := make([]Activity, 0)
 
-	err = json.NewDecoder(r.Body).Decode(&activities)
+	err := json.NewDecoder(r.Body).Decode(&activities)
 
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -150,32 +128,41 @@ func activityHandlerDBPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, activity := range activities {
-		// Convert the boolean values to their string representation
-		mondayStr := strconv.FormatBool(activity.Repeat.Monday)
-		tuesdayStr := strconv.FormatBool(activity.Repeat.Tuesday)
-		wednesdayStr := strconv.FormatBool(activity.Repeat.Wednesday)
-		thursdayStr := strconv.FormatBool(activity.Repeat.Thursday)
-		fridayStr := strconv.FormatBool(activity.Repeat.Friday)
-		saturdayStr := strconv.FormatBool(activity.Repeat.Saturday)
-		sundayStr := strconv.FormatBool(activity.Repeat.Sunday)
+	db, err := sql.Open("mysql", os.Getenv("DB_USERNAME")+":"+os.Getenv("DB_PASSWORD")+"@tcp("+
+		os.Getenv("DB_HOSTNAME")+")/"+os.Getenv("DB_NAME"))
 
-		fmt.Println([]string{activity.Title,
-			activity.Description, activity.Time, activity.Date,
-			mondayStr, tuesdayStr, wednesdayStr, thursdayStr, fridayStr,
-			saturdayStr, sundayStr})
-		err = writer.Write([]string{activity.Title,
-			activity.Description, activity.Time, activity.Date,
-			mondayStr, tuesdayStr, wednesdayStr, thursdayStr, fridayStr,
-			saturdayStr, sundayStr})
+	for _, activity := range activities {
+		resultActivityTime, err := db.Exec("INSERT INTO activity_time (time, date)"+
+			"VALUES (?, ?)", activity.Time, activity.Date)
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			log.Println("Error writing CSV record: ", err)
+			fmt.Println("Error inserting into activity_time table", err.Error())
+			return
+		}
+		timeId, err := resultActivityTime.LastInsertId()
+
+		if err != nil {
+			fmt.Println("Error with time_id", err.Error())
+			return
+		}
+
+		monday := activity.Repeat.Monday
+		tuesday := activity.Repeat.Tuesday
+		wednesday := activity.Repeat.Wednesday
+		thursday := activity.Repeat.Thursday
+		friday := activity.Repeat.Friday
+		saturday := activity.Repeat.Saturday
+		sunday := activity.Repeat.Sunday
+
+		_, err = db.Exec("INSERT INTO activity (title, description, time_id, "+
+			"monday, tuesday, wednesday, thursday, friday, saturday, sunday)"+
+			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", activity.Title, activity.Description, timeId,
+			monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+
+		if err != nil {
+			fmt.Println("Error inserting into activity table", err.Error())
 			return
 		}
 	}
-
-	writer.Flush()
 }
 
 func activityHandlerCSVGet(w http.ResponseWriter, r *http.Request) {

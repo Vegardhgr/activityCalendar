@@ -1,5 +1,4 @@
 import { React, useEffect, useRef, useState } from 'react';
-import GetDayName from '../components/utils/getDayNames';
 import axios from "axios";
 
 function NewActivity({setActivities}) {
@@ -71,9 +70,7 @@ function NewActivity({setActivities}) {
     function getActivity() {
         const [hours, minutes] = convertToTwoDigits(activityTime)
 
-        console.log(hours, " : " , minutes)
-
-        const activityArray = [{
+        const newActivity = {
             title: activityNameRef.current.value,
             description: descriptionRef.current.value,
             time: `${hours}:${minutes}`,
@@ -87,51 +84,24 @@ function NewActivity({setActivities}) {
                 saturday: saturday,
                 sunday: sunday
             }
-        }]
-
-        if (repeatActivityCheckBoxChecked) {
-            for (var i = 1; i<=30; i++) {
-                const dateOfRepeatedActivity = new Date(getDateByIncrement(activityDate, i));
-                const dayOfWeek = (dateOfRepeatedActivity.getDay() + 6) % 7; // Convert Sunday (0) to index 6
-                if (dayNames[dayOfWeek]) {
-                    activityArray.push(
-                        {
-                            title: activityNameRef.current.value,
-                            description: descriptionRef.current.value,
-                            time: `${hours}:${minutes}`,
-                            date: dateOfRepeatedActivity,
-                            repeat: {
-                                monday: monday,
-                                tuesday: tuesday,
-                                wednesday: wednesday,
-                                thursday: thursday,
-                                friday: friday,
-                                saturday: saturday,
-                                sunday: sunday
-                            }
-                        }
-                    );
-                }
-            }  
         }
-        
-        return activityArray;
+        return newActivity;
     }
 
     async function submitHandler(event) {
         event.preventDefault();
-        var activities = getActivity();
+        const newActivity = getActivity();
         setActivities(existingActivities => 
-            [...existingActivities, ...activities]);
+            [...existingActivities, newActivity]);
 
         try {
-            await axios.post('/activityHandler', activities, {
+            await axios.post('/activityHandler', newActivity, {
             headers: {
                 'Content-Type': 'application/json'
               }});
-            console.log('Data sent successfully');
+            console.log("Data sent successfully");
           } catch (error) {
-            console.error('Error sending data:', error);
+            console.error("Error sending data:", error);
         }
     }
 
@@ -149,31 +119,31 @@ function NewActivity({setActivities}) {
             <div className = "d-flex align-items-center">
                 <div className = "me-3">
                     <input type = "checkbox" id = "monday" onChange={() => setMonday(!monday)}/>
-                    <label className = "ms-1" for = "monday">Mandag</label>
+                    <label className = "ms-1" htmlFor = "monday">Mandag</label>
                 </div>
                 <div className = "me-3">
                     <input type = "checkbox" id = "tuesday" onChange={() => setTuesday(!tuesday)}/>
-                    <label className = "ms-1" for = "tuesday">Tirsdag</label>
+                    <label className = "ms-1" htmlFor = "tuesday">Tirsdag</label>
                 </div>
                 <div className = "me-3">
                     <input type = "checkbox" id = "wednesday" onChange={() => setWednesday(!wednesday)}/>
-                    <label className = "ms-1" for = "wednesday">Onsdag</label>
+                    <label className = "ms-1" htmlFor = "wednesday">Onsdag</label>
                 </div>
                 <div className = "me-3">
                     <input type = "checkbox" id = "thursday" onChange={() => setThursday(!thursday)}/>
-                    <label className = "ms-1" for = "thursday">Torsdag</label>
+                    <label className = "ms-1" htmlFor = "thursday">Torsdag</label>
                 </div>
                 <div className = "me-3">
                     <input type = "checkbox" id = "friday" onChange={() => setFriday(!friday)}/>
-                    <label className = "ms-1" for = "friday">Fredag</label>
+                    <label className = "ms-1" htmlFor = "friday">Fredag</label>
                 </div>
                 <div className = "me-3">
                     <input type = "checkbox" id = "saturday" onChange={() => setSaturday(!saturday)}/>
-                    <label className = "ms-1" for = "saturday">Lørdag</label>
+                    <label className = "ms-1" htmlFor = "saturday">Lørdag</label>
                 </div>
                 <div className = "me-3">
                     <input type = "checkbox" id = "sunday" onChange={() => setSunday(!sunday)}/>
-                    <label className = "ms-1" for = "sunday">Søndag</label>
+                    <label className = "ms-1" htmlFor = "sunday">Søndag</label>
                 </div>
             </div>
         )
@@ -222,7 +192,7 @@ function NewActivity({setActivities}) {
                 <h2><u>Ny aktivitet</u></h2>
                 <form className="row g-3" onSubmit={submitHandler}>
                     <div className="col-12">
-                        <label for="activityName" className="form-label">
+                        <label htmlFor="activityName" className="form-label">
                             Navn
                         </label>
                         <input
@@ -234,7 +204,7 @@ function NewActivity({setActivities}) {
                         />
                     </div>
                     <div className="col-12">
-                        <label for="activityDescription" className="form-label">
+                        <label htmlFor="activityDescription" className="form-label">
                             Beskrivelse
                         </label>
                         <textarea
@@ -264,7 +234,7 @@ function NewActivity({setActivities}) {
                     </div>
                     <div className = "d-flex align-items-center">
                         <div className = "me-2">
-                            <label for = "repeatActivityCheckBox">Repeter aktiviteten?</label>
+                            <label htmlFor = "repeatActivityCheckBox">Repeter aktiviteten?</label>
                         </div>
                         <input 
                             type="checkbox"

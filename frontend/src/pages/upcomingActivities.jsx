@@ -22,12 +22,14 @@ function UpcomingActivities({ activities }) {
         <div className = "row justify-content-center ">
             <div className = "col-md-8">
                 <h2><u>Kommende aktiviteter</u></h2>    
-                    {sortedActivities.map(activity =>
-                        <ActivityCard time = {activity.time} date = {activity.date}>
-                            <h5 class="card-title"><b>{activity.title}</b></h5>
-                            <p class="card-text">{activity.description}</p>
-                        </ActivityCard>
-                    )}
+                    {sortedActivities.length !== 0 ? 
+                        sortedActivities.map(activity =>
+                            <ActivityCard time = {activity.time} date = {activity.date}>
+                                <h5 class="card-title"><b>{activity.title}</b></h5>
+                                <p class="card-text">{activity.description}</p>
+                            </ActivityCard>
+                        ) : <div><h4>Foreløpig ingen kommende aktiviteter</h4></div>
+                    }
             </div>
         </div>
     );

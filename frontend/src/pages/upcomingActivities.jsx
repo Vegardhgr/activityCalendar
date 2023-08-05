@@ -1,40 +1,45 @@
+import { useEffect, useState } from "react";
 import ActivityCard from "../components/cards/activityCard";
+import GetRepeatedActivities from "../components/utils/getRepeatedActivities";
 import SortActivities from "../components/utils/sortActivities";
 
 function UpcomingActivities({ activities }) {
     const timeNow = new Date();
+    
     let sortedActivities = SortActivities({activityArray: activities})
 
     /*Filtering for upcomming activities*/
-    sortedActivities = sortedActivities.filter(activity => {
+    const upCommingActivities = sortedActivities.filter(activity => {
         const activityDate = new Date(activity.date);
         return (
             activityDate >= timeNow
         );
     });
 
-    function getUpCommingActivities() {
-        const upCommingActivities = (
-            sortedActivities.map((activity, index) =>
+    function getUpCommingActivityCards() {
+        const upCommingActivityCards = (
+            upCommingActivities.map((activity, index) =>
                 <ActivityCard key = {index}  time = {activity.time} date = {activity.date}>
                     <h5 key={activity.id} className="card-title"><b>{activity.title}</b></h5>
                     <p className="card-text">{activity.description}</p>
                 </ActivityCard>
             )
         )
-        return upCommingActivities
+        return upCommingActivityCards
     }
 
-    const upCommingActivities = getUpCommingActivities();
+    var activityCards = getUpCommingActivityCards();
+
+    
 
     return (
         <div className = "row justify-content-center ">
             <div className = "col-md-8">
                 <h2><u>Kommende aktiviteter</u></h2>    
-                    {upCommingActivities.length !== 0 ? 
-                        upCommingActivities
-                        : <div><h4>Foreløpig ingen kommende aktiviteter</h4></div>
-                    }
+                {activityCards.length !== 0 ? 
+                    activityCards
+                    : <div><h4>Foreløpig ingen kommende aktiviteter</h4></div>
+                }
             </div>
         </div>
     );

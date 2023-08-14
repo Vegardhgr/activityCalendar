@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import ActivityCard from "../components/cards/activityCard";
-import GetRepeatedActivities from "../components/utils/getRepeatedActivities";
 import SortActivities from "../components/utils/sortActivities";
 
 function UpcomingActivities({ activities }) {
@@ -19,7 +17,7 @@ function UpcomingActivities({ activities }) {
     function getUpCommingActivityCards() {
         const upCommingActivityCards = (
             upCommingActivities.map((activity, index) =>
-                <ActivityCard key = {index}  time = {activity.time} date = {activity.date}>
+                <ActivityCard key = {index} activity = {activity}>
                     <h5 key={activity.id} className="card-title"><b>{activity.title}</b></h5>
                     <p className="card-text">{activity.description}</p>
                 </ActivityCard>

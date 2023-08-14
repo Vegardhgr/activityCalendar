@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom';
 
 function NavigationBar() {
     return(
-        <nav className="navbar navbar-expand-md" style = {{backgroundColor: "#60ff70"}}>
+        <nav className="navbar navbar-expand-md" style = {{backgroundColor: "#D4CEB0"}}>
             <div className="container-fluid">
-                <a className="navbar-brand">Logo</a>
+                <div className="navbar-brand">
+                    <Link to = "/" className = "nav-link">Logo</Link>
+                </div>
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div className="navbar-nav">
                         <Link to = "/" className = "nav-link">Hjem</Link>

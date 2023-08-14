@@ -5,13 +5,14 @@ import Calendar from '../pages/calendar'
 import NewActivity from "../pages/newActivity";
 import UpcomingActivities from '../pages/upcomingActivities';
 
-function Router({activities, setActivities}) {
+function Router({activities}) {
+    console.log("Router: " + activities)
     return (
         <Routes>
             <Route path="/" element = {<Home/>}/>
             <Route path="/kalender" element = {<Calendar activities={activities}/>}/>
             <Route path="/logg-inn" element = {<LogIn/>}/>
-            <Route path="/ny-aktivitet" element = {<NewActivity setActivities={setActivities} />}/>
+            <Route path="/ny-aktivitet" element = {<NewActivity/>}/>
             <Route path="/kommende-aktiviteter" element = {<UpcomingActivities activities={activities} />}/>
         </Routes>
     );

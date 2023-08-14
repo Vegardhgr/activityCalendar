@@ -1,6 +1,19 @@
 function GetDayNextMonth(i, setClickedDate, currYear, currMonth, calendarDayBoxWidth,
     calendarDayBoxHeightFunc, calendarDayBoxPadding, getActivity, monthNames, weekArr,
     currMonthActivities) {
+        const dateToday = new Date()
+
+        function isDateToday() {
+            const dateToValidate = new Date(currYear, currMonth+1, dayInNextMonthCounter)
+            
+            if (dateToday.getFullYear() === dateToValidate.getFullYear() 
+            && dateToday.getMonth() === dateToValidate.getMonth()
+            && dateToday.getDate() === dateToValidate.getDate()) {
+                return true;
+            }
+            return false;
+        }
+
         let dayInNextMonthCounter = 0;
         let daysInNextMonthArr = [];
         for (let j = weekArr.length; j % 7 !== 0; j++) {
@@ -23,13 +36,29 @@ function GetDayNextMonth(i, setClickedDate, currYear, currMonth, calendarDayBoxW
                     borderWidth:"thin",
                     overflow: "scroll"
                     }}>
-                        <div className = "mb-2 d-flex justify-content-center">
-                            {new Date(currYear, currMonth+1, new Date(currYear, currMonth+1, dayInNextMonthCounter).getDate()).getDate()} 
-                            {new Date(currYear, currMonth+1, new Date(currYear, currMonth+1, dayInNextMonthCounter).getDate()).getDate()===1 ?
-                            currMonth === 11 ? ". " + monthNames[new Date(currYear+1, 0, i).getMonth() ] :
-                            ". " + monthNames[new Date(currYear, currMonth+1, 1).getMonth()] : ""}
+                        <div className = "mb-1 d-flex justify-content-center">
+                            {isDateToday() ? (
+                                <div className = "d-flex justify-content-center" style = {{width: "22px", borderRadius: "100%", backgroundColor: "lightgray"}}>
+                                    {new Date(currYear, currMonth+1, dayInNextMonthCounter).getDate()}
+                                </div>
+                            ) : ( 
+                                <div>
+                                    {new Date(currYear, currMonth+1, dayInNextMonthCounter).getDate()}
+                                </div>
+                            )}
+
+                            {new Date(currYear, currMonth+1, dayInNextMonthCounter).getDate()===1 ? (
+                                currMonth === 11 ? (
+                                    ". " + monthNames[new Date(currYear+1, 0, i).getMonth()] 
+                                ) : (
+                                    ". " + monthNames[new Date(currYear, currMonth+1, 1).getMonth()]
+                                )
+                            ) : (
+                                ""
+                            )}
+                            
                         </div>
-                        <div style = {{backgroundColor:"lightgray"}}>
+                        <div className = "d-flex justify-content-center" style = {{borderRadius:"10px", backgroundColor: "lightgray"}}>
                             {filteredActivitiesNextMonth.length > 0 ? 
                             <u>{filteredActivitiesNextMonth.length} aktiviteter:</u> : ""}
                         </div>

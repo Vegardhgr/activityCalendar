@@ -1,7 +1,7 @@
-import { React, useEffect, useRef, useState } from 'react';
+import { React, useRef, useState } from 'react';
 import axios from "axios";
 
-function NewActivity({setActivities}) {
+function NewActivity() {
     const hoursInputRef = useRef(null);
     const minutesInputRef = useRef(null);
     const dateInputRef = useRef(null);
@@ -17,43 +17,6 @@ function NewActivity({setActivities}) {
     const [sunday, setSunday] = useState(false);
     const activityNameRef = useRef("");
     const descriptionRef = useRef("");
-
-    var dayNames = [monday, tuesday, wednesday, thursday, friday, saturday, sunday];
-
-    useEffect(() => {
-        dayNames = [monday, tuesday, wednesday, thursday, friday, saturday, sunday];
-
-    }, [monday, tuesday, wednesday, thursday, friday, saturday, sunday])
-
-    const getDateByIncrement = (date, increment) => {
-      
-        // Creating the date instance
-        let d = new Date(date);
-        let day = d.getDate();
-        let month = d.getMonth()+1;
-        let year = d.getFullYear()
-        if (day + increment > new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()) {
-            day = String(day+increment - new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate());
-            month = month+1;
-        } else {
-            day = String(d.getDate() + increment)
-        }
-        if (month === 12) {
-            month = 0;
-            year += 1;
-        }        
-      
-        // Adding leading 0 if the day or month
-        // is one digit value
-        month = month.length === 1 ?
-            month.padStart('2', '0') : month;
-      
-        day = day.length === 1 ? 
-            day.padStart('2', '0') : day;
-      
-        // Printing the present date
-        return (`${year}/${month}/${day}`);
-    }
       
     function convertToTwoDigits(activityTime) {
         let [hours, minutes] = activityTime.split(':');    
@@ -91,16 +54,16 @@ function NewActivity({setActivities}) {
     async function submitHandler(event) {
         event.preventDefault();
         const newActivity = getActivity();
-        setActivities(existingActivities => 
-            [...existingActivities, newActivity]);
 
         try {
-            await axios.post('/activityHandler', newActivity, {
-            headers: {
-                'Content-Type': 'application/json'
-              }});
-            console.log("Data sent successfully");
-          } catch (error) {
+            await axios.post('/activityHandler?type=createNewActivity', newActivity, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            window.location.reload();
+        } catch (error) {
             console.error("Error sending data:", error);
         }
     }

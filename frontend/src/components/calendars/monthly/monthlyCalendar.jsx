@@ -85,10 +85,10 @@ function MonthlyCalendar({setClickedDate, activities}) {
             'opacity-out' : showNextMonth ? 
                 'opacity-in' : 'opacity-out';
             
-        const currMonthActivities = activities.filter(element => 
-                new Date(element.date).getMonth() >= currMonth-1 &&
-                new Date(element.date).getMonth() <= currMonth+1 &&
-                new Date(element.date).getFullYear() === currYear
+        const relevantActivities = activities.filter(activity => 
+                new Date(activity.date).getMonth() >= currMonth-1 &&
+                new Date(activity.date).getMonth() <= currMonth+1 &&
+                new Date(activity.date).getFullYear() === currYear
         )
 
         const dayNameArray = ['Søn', 'Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør'];
@@ -107,22 +107,16 @@ function MonthlyCalendar({setClickedDate, activities}) {
         }
 
         for (let i = 1; i<=numberOfDays; i++) {
-            const filteredActivities = currMonthActivities.filter(activity =>
-                new Date(activity.date).getDate() === i &&
-                new Date(activity.date).getMonth() === currMonth
-            );
-
-
             const dayBox = 
-                GetDayCurrentMonth(i, setClickedDate, currMonth, currYear, calendarDayBoxHeightFunc, getActivity, 
-                    currMonthActivities, filteredActivities, monthNames, calendarDayBoxWidth, calendarDayBoxPadding, monthArr)
+                GetDayCurrentMonth(i, setClickedDate, currMonth, currYear, calendarDayBoxHeightFunc, getActivity(relevantActivities, i, currMonth), 
+                    monthNames, calendarDayBoxWidth, calendarDayBoxPadding, monthArr)
             
-                            
+            
             /*Fills in empty space at the beginning of the calendar, if any,
               with dates from the previous month*/
             if (i === 1) {
                 const dayDivsInPrevMonth = GetDayPrevMonth(setClickedDate, currYear, currMonth, calendarDayBoxWidth,
-                        calendarDayBoxHeightFunc, calendarDayBoxPadding, getActivity, currMonthActivities)  
+                        calendarDayBoxHeightFunc, calendarDayBoxPadding, getActivity, relevantActivities)  
                 for (var j = 0; j < dayDivsInPrevMonth.length; j++) {
                     weekArr.push(dayDivsInPrevMonth[j]) 
                 }
@@ -140,7 +134,7 @@ function MonthlyCalendar({setClickedDate, activities}) {
                     const dayDivsInNextMonth = (
                         GetDayNextMonth(i, setClickedDate, currYear, currMonth, calendarDayBoxWidth,
                             calendarDayBoxHeightFunc, calendarDayBoxPadding, getActivity, monthNames, weekArr,
-                            currMonthActivities)
+                            relevantActivities)
                     );
                     for (var j = 0; j < dayDivsInNextMonth.length; j++) {
                         weekArr.push(dayDivsInNextMonth[j])
@@ -151,31 +145,25 @@ function MonthlyCalendar({setClickedDate, activities}) {
                 weekArr = [];
             }
         }
-        
-
-
 
     return (
         <div>
             <div style={{ width: "fit-content" }}>
-                <div style={{ height: calendarHeight + "px", padding: "10 px", backgroundColor: "#b3f2b3" }}>
-                    <div className="mb-2" style={{ display: "flex" }}>
-                        <div className="d-flex">
-                            <div onClick={prevMonth}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="32" fill="" className="bi bi-caret-left" viewBox="0 0 16 16">
-                                    <path d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
-                                </svg>
-                            </div>
-                            <div onClick={nextMonth}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="32" fill="" className="bi bi-caret-right" viewBox="0 0 16 16">
-                                    <path d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
-                                </svg>
-                            </div>
+                <div style={{ height: calendarHeight + "px", padding: "10 px", backgroundColor: "" }}>
+                    <div className="d-flex">
+                        <div style = {{cursor:"pointer"}} onClick={prevMonth}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="32" className="bi bi-caret-left" viewBox="0 0 16 16">
+                                <path d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
+                            </svg>
+                        </div>
+                        <div style = {{cursor:"pointer"}} onClick={nextMonth}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="32" className="bi bi-caret-right" viewBox="0 0 16 16">
+                                <path d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
+                            </svg>
                         </div>
                         <div>
                             <h4>{monthName} {currYear}</h4>
-                        </div>
-                        
+                        </div> 
                     </div>
                     {dayNameArrayDivs}
                     <div 

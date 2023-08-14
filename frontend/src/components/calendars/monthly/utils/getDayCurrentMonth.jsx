@@ -1,5 +1,19 @@
+import { useState } from "react";
+
 function GetDayCurrentMonth(i, setClickedDate, currMonth, currYear, calendarDayBoxHeightFunc, getActivity, 
-    currMonthActivities, filteredActivities, monthNames, calendarDayBoxWidth, calendarDayBoxPadding, monthArr) {
+    monthNames, calendarDayBoxWidth, calendarDayBoxPadding, monthArr) {    
+
+    const dateToday = new Date()
+
+    function isDateToday() {
+        if (dateToday.getFullYear() === currYear 
+        && dateToday.getMonth() === currMonth
+        && dateToday.getDate() === i) {
+            return true;
+        }
+        return false;
+    }
+
     const dayInCurrentMonth = (
         <div key = {i} onClick={() => setClickedDate([i, currMonth+1, currYear])}
             style={{backgroundColor: "#eeeeee",
@@ -12,17 +26,28 @@ function GetDayCurrentMonth(i, setClickedDate, currMonth, currYear, calendarDayB
             borderWidth:"thin",
             overflow: "scroll"
         }}>
-            <div className = "mb-2 d-flex justify-content-center">
+            <div className = "mb-1 d-flex justify-content-center">
                 <b>
-                    {i}{i===1 ? ". " + monthNames[new Date(currYear, currMonth, i).getMonth()] : ""}
+                    {isDateToday() ? (
+                        <span className = "d-flex justify-content-center" style = {{width: "22px", borderRadius: "100%", backgroundColor: "#779fdd"}}>
+                            {i}
+                        </span>
+                    ) : (
+                        <span>
+                            {i}
+                        </span>
+                    )}
+                    {i===1 ? ". " + monthNames[new Date(currYear, currMonth, i).getMonth()] : ""}
                 </b>
             </div>
-            <div style = {{backgroundColor: "lightgreen"}} >
-                {filteredActivities.length > 0 ? 
-                    <u>{filteredActivities.length} aktiviteter:</u> : ""}
+            <div style = {{borderRadius:"10px", backgroundColor: "#779fdd"}} >
+                <div className = "d-flex justify-content-center">
+                    {getActivity.length > 0 ? 
+                        <u>{getActivity.length} aktiviteter:</u> : ""}
+                </div>
             </div>    
             <div>
-                {getActivity(currMonthActivities, i, currMonth)}
+                {getActivity}
             </div>
         </div>
     )

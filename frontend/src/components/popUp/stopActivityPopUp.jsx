@@ -30,12 +30,12 @@ function DeleteActivityPopUp(props) {
 
 
     function updateExpireDate() {
-        UpdateExpireDate({ id: props.activity.id, dateExpired: convertActivityDate()})
+        UpdateExpireDate({ id: props.activity.id, dateExpired: convertActivityDate(), s: props.s})
         setOnClose(false)
     }
 
     function excludeDate() {
-        ExcludeDate({id: props.activity.id, dateToBeExcluded: convertActivityDate()})
+        ExcludeDate({id: props.activity.id, dateToBeExcluded: convertActivityDate(), s: props.s})
         setOnClose(false)
     }
 

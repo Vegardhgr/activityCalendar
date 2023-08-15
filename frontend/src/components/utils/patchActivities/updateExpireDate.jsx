@@ -1,6 +1,7 @@
 import axios from "axios";
+import CheckExpiredActivity from "../checkExpiredActivity";
 
-function UpdateExpireDate({id, dateExpired}) {
+function UpdateExpireDate({id, dateExpired, s}) {
     const myPromise = new Promise((resolve, reject) => {
         axios.patch("/activityHandler", 
           	{id: id, dateExpired: dateExpired}, 
@@ -13,7 +14,12 @@ function UpdateExpireDate({id, dateExpired}) {
         .then(response => {
           console.log(response.data);
           resolve(true)
-		  window.location.reload();
+          s(activities => {
+            const activeActivities = activities.filter(activity => {
+              return CheckExpiredActivity(dateExpired, activity.date)
+            })
+            return [...activeActivities];
+          })
         })
         .catch(error => {
           if (error.response) {

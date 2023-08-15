@@ -1,7 +1,7 @@
 import { React, useRef, useState } from 'react';
 import axios from "axios";
 
-function NewActivity() {
+function NewActivity({s}) {
     const hoursInputRef = useRef(null);
     const minutesInputRef = useRef(null);
     const dateInputRef = useRef(null);
@@ -61,8 +61,10 @@ function NewActivity() {
                     'Content-Type': 'application/json'
                 }
             });
-    
-            window.location.reload();
+            s(activities => {
+                const updatedActivityArray = [...activities, newActivity];
+                return updatedActivityArray
+            })
         } catch (error) {
             console.error("Error sending data:", error);
         }

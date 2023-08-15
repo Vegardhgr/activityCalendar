@@ -1,7 +1,7 @@
 import ActivityCard from "../components/cards/activityCard";
 import SortActivities from "../components/utils/sortActivities";
 
-function UpcomingActivities({ activities }) {
+function UpcomingActivities({ activities, s }) {
     const timeNow = new Date();
     
     let sortedActivities = SortActivities({activityArray: activities})
@@ -17,7 +17,7 @@ function UpcomingActivities({ activities }) {
     function getUpCommingActivityCards() {
         const upCommingActivityCards = (
             upCommingActivities.map((activity, index) =>
-                <ActivityCard key = {index} activity = {activity}>
+                <ActivityCard key = {index} activity = {activity} s = {s}>
                     <h5 key={activity.id} className="card-title"><b>{activity.title}</b></h5>
                     <p className="card-text">{activity.description}</p>
                 </ActivityCard>

@@ -6,12 +6,14 @@ function GetRepeatedActivities(activity, numberOfDaysInFuture, excludedDates) {
 		return
 	}
 	console.log("check this: " + excludedDates)
-
-	const relevantExcludedDates = excludedDates.filter(excludedActivityDate => {
-		if (excludedActivityDate.id === activity.id) {
-			return excludedActivityDate;
-		}
-	})
+	let relevantExcludedDates = []
+	if (excludedDates !== undefined) {
+		relevantExcludedDates = excludedDates.filter(excludedActivityDate => {
+			if (excludedActivityDate.id === activity.id) {
+				return excludedActivityDate;
+			}
+		})
+	}
 	const dayNamesArr = GetDayName({language: "eng", capitalLetter: false})
 	let daysRepeat = [];
 	for (var i = 0; i < 7; i++) {

@@ -1,8 +1,6 @@
 function ActivitiesReducer(activities, action) {
-    console.log("action type: " + action.type)
     switch (action.type) {
         case "addedAllActivities": {
-            console.log("w: " + [...action.activities])
             return [...action.activities]
         }
 

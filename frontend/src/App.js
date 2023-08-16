@@ -1,6 +1,6 @@
 import NavBar from './components/navBar/navigationBar';
 import Router from './router/router';
-import { useState, useRef, useEffect, useReducer } from 'react';
+import { useRef, useEffect, useReducer } from 'react';
 import GetRepeatedActivities from './components/utils/getRepeatedActivities';
 import FetchActivitiesFromDB from './components/utils/fetchActivitiesFromDB';
 import GetAllExcludedDates from './components/utils/getAllExcludedDates';
@@ -21,7 +21,7 @@ function App() {
 		const updatedActivities =  SortActivities(fetchedActivities.flatMap(activity => GetRepeatedActivities(activity, 365, excludedDatesRef.current)));
 
 		/*Check to see if activities has changed so no unnecessary updates
-		happens. It will cause infinite rerenders due to activities is in the 
+		happen. It will cause infinite rerenders due to activities is in the 
 		dependency array.*/
 		if (!isEqual(updatedActivities, activities)) { 
 			dispatch({

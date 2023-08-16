@@ -2,10 +2,8 @@ import CheckExpiredActivity from "./checkExpiredActivity";
 import GetDayName from "./getDayNames";
 function GetRepeatedActivities(activity, numberOfDaysInFuture, excludedDates) {
 	if (activity === undefined) {
-		console.log("activity is undefined")
 		return
 	}
-	console.log("check this: " + excludedDates)
 	let relevantExcludedDates = []
 	if (excludedDates !== undefined) {
 		relevantExcludedDates = excludedDates.filter(excludedActivityDate => {

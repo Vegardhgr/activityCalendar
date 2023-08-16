@@ -1,6 +1,3 @@
-import { useContext } from "react";
-import { ActivitiesContext } from "./activitiesContext";
-
 function SortActivities(activities) {
     if (activities.length !== 0) {
         const sortedActivityArray = activities.sort((a, b) => {

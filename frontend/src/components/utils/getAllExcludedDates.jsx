@@ -6,8 +6,8 @@ const GetAllExcludedDates = async() => {
         if (response.data !== null) {
             return response.data
         }
-    } catch (error) {
-        console.log("Error fetching excluded dates: " + error)
+    } catch {
+        console.log("Error fetching excluded dates")
         return []
     }
 }

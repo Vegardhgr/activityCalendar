@@ -1,7 +1,4 @@
 import axios from "axios";
-import CheckExpiredActivity from "../checkExpiredActivity";
-import { useContext } from "react";
-import { ActivitiesDispatchContext } from "../activitiesContext";
 
 function UpdateExpireDate({id, dateExpired}) {
 	
@@ -14,22 +11,10 @@ function UpdateExpireDate({id, dateExpired}) {
             	},
         	}
 		)
-        .then(response => {
-          	console.log(response.data);
+        .then(() => {
           	resolve(true)		  	
         })
-        .catch(error => {
-          if (error.response) {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-          } else if (error.request) {
-            console.log(error.request);
-          } else {
-            console.log('Error', error.message);
-          }
-          console.log(error.config);
-
+        .catch(() => {
           reject(false);
         })
     })

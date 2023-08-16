@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 function GetDayCurrentMonth(i, setClickedDate, currMonth, currYear, calendarDayBoxHeightFunc, getActivity, 
     monthNames, calendarDayBoxWidth, calendarDayBoxPadding, monthArr) {    
 

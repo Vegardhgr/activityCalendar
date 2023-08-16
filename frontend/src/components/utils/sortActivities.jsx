@@ -1,6 +1,9 @@
-function SortActivities({activityArray}) {
-    if (activityArray.length !== 0) {
-        const sortedActivityArray = activityArray.sort((a, b) => {
+import { useContext } from "react";
+import { ActivitiesContext } from "./activitiesContext";
+
+function SortActivities(activities) {
+    if (activities.length !== 0) {
+        const sortedActivityArray = activities.sort((a, b) => {
             const dateA = new Date(a.date);
             const dateB = new Date(b.date);
             if (dateA < dateB) return -1;

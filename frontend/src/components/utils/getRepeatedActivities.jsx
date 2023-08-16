@@ -30,9 +30,9 @@ function GetRepeatedActivities(activity, numberOfDaysInFuture, excludedDates) {
 	const daysInFuture = (new Date() - new Date(activity.date)) > 0 ? 
 		numberOfDaysInFuture + (new Date() - new Date(activity.date))/(24*60*60*1000) : (numberOfDaysInFuture)
 	let repeatingActivityArray = [];
-	for (var i = 1; i <= daysInFuture; i++) {
+	for (var i = 1; i <= daysInFuture+1; i++) {
 		const startDateOfActivity = new Date(activity.date)
-		const newUpdatedDate = new Date(startDateOfActivity.getTime() + (i) * 24 * 60 * 60 * 1000);
+		const newUpdatedDate = new Date(startDateOfActivity.getTime() + (i-1) * 24 * 60 * 60 * 1000);
 		const weekDayOfDayInFuture = new Date(newUpdatedDate).getDay()
 		const isActivityActive = CheckExpiredActivity(activity.dateExpired.String, newUpdatedDate)
 		if (!isActivityActive) { /*No need to look for more activities*/

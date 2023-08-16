@@ -1,7 +1,8 @@
-import { React, useRef, useState } from 'react';
+import { React, useContext, useRef, useState } from 'react';
 import axios from "axios";
+import { ActivitiesDispatchContext } from '../components/utils/activitiesContext';
 
-function NewActivity({s}) {
+function NewActivity() {
     const hoursInputRef = useRef(null);
     const minutesInputRef = useRef(null);
     const dateInputRef = useRef(null);
@@ -17,6 +18,8 @@ function NewActivity({s}) {
     const [sunday, setSunday] = useState(false);
     const activityNameRef = useRef("");
     const descriptionRef = useRef("");
+
+    const dispatch = useContext(ActivitiesDispatchContext)
       
     function convertToTwoDigits(activityTime) {
         let [hours, minutes] = activityTime.split(':');    
@@ -61,10 +64,12 @@ function NewActivity({s}) {
                     'Content-Type': 'application/json'
                 }
             });
-            s(activities => {
-                const updatedActivityArray = [...activities, newActivity];
-                return updatedActivityArray
+
+            dispatch({
+                type: "addedOneActivity",
+                newActivity: newActivity,
             })
+
         } catch (error) {
             console.error("Error sending data:", error);
         }

@@ -5,63 +5,44 @@ import GetRepeatedActivities from './components/utils/getRepeatedActivities';
 import FetchActivitiesFromDB from './components/utils/fetchActivitiesFromDB';
 import GetAllExcludedDates from './components/utils/getAllExcludedDates';
 import { isEqual } from 'lodash';
+import { ActivitiesContext, ActivitiesDispatchContext } from "./components/utils/activitiesContext.jsx"
+import ActivitiesReducer from "./components/utils/activitiesReducer.jsx"
+import SortActivities from './components/utils/sortActivities';
 
 function App() {
 	document.body.style.backgroundColor = "#e8f3f1";
-	const [activities, setActivities] = useState([]);
+	const [activities, dispatch] = useReducer(ActivitiesReducer, [])
 	const excludedDatesRef = useRef([])
-	const [renderApp, setRenderApp] = useState(false);
-	const prevActivitiesRef = useRef(activities);
-	const [shouldFetchAndFill, setShouldFetchAndFill] = useState(true);
-
-	//const [activities, dispatch] = useReducer(activitiesReducer, initialActivities)
-
-	async function fillWithRepeatedTasks() {
-		setActivities(prevActivities => {
-			const updatedActivities = prevActivities.flatMap(activity => GetRepeatedActivities(activity, 365, excludedDatesRef.current));
-			return [...prevActivities, ...updatedActivities];
-		});
-	}
 
 	/*Fetching activities from DB and fills with repeated tasks */
-	async function fetchAndFill() {
-		excludedDatesRef.current =  await GetAllExcludedDates();
-		await FetchActivitiesFromDB({setActivities: setActivities});
-		await fillWithRepeatedTasks()
+	async function fetchActivities() {
+		excludedDatesRef.current = await GetAllExcludedDates();
+		const fetchedActivities = await FetchActivitiesFromDB()
+		const updatedActivities =  SortActivities(fetchedActivities.flatMap(activity => GetRepeatedActivities(activity, 365, excludedDatesRef.current)));
+
+		/*Check to see if activities has changed so no unnecessary updates
+		happens. It will cause infinite rerenders due to activities is in the 
+		dependency array.*/
+		if (!isEqual(updatedActivities, activities)) { 
+			dispatch({
+				type: "addedAllActivities",
+				activities: [...updatedActivities],
+			});
+		}
 	}
 
 	useEffect(() => {
-		if (excludedDatesRef.length != 0) {
-			setRenderApp(true)
-		}
-	}, [excludedDatesRef, renderApp])
+		fetchActivities()		 
+	}, [activities])
 
-
-	useEffect(() => {
-        if (shouldFetchAndFill) {
-            fetchAndFill();
-            setShouldFetchAndFill(false);
-        }
-    }, [shouldFetchAndFill]);
-
-    useEffect(() => {
-        if (!isEqual(prevActivitiesRef.current, activities)) {
-            setShouldFetchAndFill(true);
-            prevActivitiesRef.current = activities;
-        }
-    }, [activities]);
-
-
-	return <>
-	    {!renderApp ? "" : 
-	      <div>
-	        <NavBar/>
-	        <div>
-	          <Router activities={activities} s={setActivities}/>
-	        </div>
-	    </div>
-	    }
-	</>
+	return (    
+		<ActivitiesContext.Provider value = {activities}>
+			<ActivitiesDispatchContext.Provider value = {dispatch}>
+	    		<NavBar/>
+	      		<Router />
+			</ActivitiesDispatchContext.Provider>
+		</ActivitiesContext.Provider>
+	)
 }
 
 export default App;

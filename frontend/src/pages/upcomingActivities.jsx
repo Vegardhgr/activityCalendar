@@ -1,10 +1,13 @@
+import { useContext } from "react";
 import ActivityCard from "../components/cards/activityCard";
 import SortActivities from "../components/utils/sortActivities";
+import { ActivitiesContext } from "../components/utils/activitiesContext";
 
-function UpcomingActivities({ activities, s }) {
+function UpcomingActivities() {
+    const activities = useContext(ActivitiesContext)
     const timeNow = new Date();
     
-    let sortedActivities = SortActivities({activityArray: activities})
+    let sortedActivities = SortActivities(activities)
 
     /*Filtering for upcomming activities*/
     const upCommingActivities = sortedActivities.filter(activity => {
@@ -17,7 +20,7 @@ function UpcomingActivities({ activities, s }) {
     function getUpCommingActivityCards() {
         const upCommingActivityCards = (
             upCommingActivities.map((activity, index) =>
-                <ActivityCard key = {index} activity = {activity} s = {s}>
+                <ActivityCard key = {index} activity = {activity}>
                     <h5 key={activity.id} className="card-title"><b>{activity.title}</b></h5>
                     <p className="card-text">{activity.description}</p>
                 </ActivityCard>

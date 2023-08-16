@@ -1,11 +1,13 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import CountMondays from "./utils/countMondays.jsx";
 import './monthlyCalendar.css';
 import GetDayCurrentMonth from "./utils/getDayCurrentMonth.jsx";
 import GetDayPrevMonth from "./utils/getDayPrevMonth.jsx";
 import GetDayNextMonth from "./utils/getDayNextMonth.jsx";
+import { ActivitiesContext } from "../../utils/activitiesContext.jsx";
 
-function MonthlyCalendar({setClickedDate, activities}) {
+function MonthlyCalendar({setClickedDate}) {
+    const activities = useContext(ActivitiesContext)
     const [currYear, setCurrYear] = useState(new Date().getFullYear());
     const [currMonth, setCurrMonth] = useState(new Date().getMonth());
     const [transitioning, setTransitioning] = useState(false);

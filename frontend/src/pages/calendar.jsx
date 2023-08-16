@@ -1,12 +1,14 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import MonthlyCalendar from "../components/calendars/monthly/monthlyCalendar";
 import SortActivities from "../components/utils/sortActivities";
 import CalendarInfoBox from "../components/calendars/calendarInfoBox";
+import { ActivitiesContext } from "../components/utils/activitiesContext";
 
-function Calendar({activities}) {
+function Calendar({}) {
+    const activities = useContext(ActivitiesContext)
     const currentDate = new Date();
     const [clickedDate, setClickedDate] = useState([currentDate.getDate(), currentDate.getMonth()+1, currentDate.getFullYear()]);
-    const sortedActivities = SortActivities({activityArray: activities})
+    const sortedActivities = SortActivities(activities)
 
     let day = clickedDate[0];
     day = day.toLocaleString('en-US', {
@@ -23,7 +25,7 @@ function Calendar({activities}) {
     return (
         <div> 
             <div className="mt-2 d-flex justify-content-center">
-                <MonthlyCalendar setClickedDate = {setClickedDate} activities = {activities}/>
+                <MonthlyCalendar setClickedDate = {setClickedDate} />
                 <CalendarInfoBox year = {year} month = {month} day = {day} sortedActivities = {sortedActivities}/>
             </div>
 

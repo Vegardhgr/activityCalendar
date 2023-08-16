@@ -1,7 +1,10 @@
 import axios from "axios";
 import CheckExpiredActivity from "../checkExpiredActivity";
+import { useContext } from "react";
+import { ActivitiesDispatchContext } from "../activitiesContext";
 
-function UpdateExpireDate({id, dateExpired, s}) {
+function UpdateExpireDate({id, dateExpired}) {
+	
     const myPromise = new Promise((resolve, reject) => {
         axios.patch("/activityHandler", 
           	{id: id, dateExpired: dateExpired}, 
@@ -12,14 +15,8 @@ function UpdateExpireDate({id, dateExpired, s}) {
         	}
 		)
         .then(response => {
-          console.log(response.data);
-          resolve(true)
-          s(activities => {
-            const activeActivities = activities.filter(activity => {
-              return CheckExpiredActivity(dateExpired, activity.date)
-            })
-            return [...activeActivities];
-          })
+          	console.log(response.data);
+          	resolve(true)		  	
         })
         .catch(error => {
           if (error.response) {

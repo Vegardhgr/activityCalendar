@@ -26,7 +26,7 @@ function ActivityCard(props) {
             </h5>
             {showDeleteActivityPopUp && 
             <div style = {{zIndex: 9999, position: "absolute"}}>
-            <StopActivityPopUp  s = {props.s} activity = {props.activity} setOnClose = {() => setShowDeleteActivityPopUp()} onClose={showDeleteActivityPopUp}/>
+            <StopActivityPopUp activity = {props.activity} setOnClose = {() => setShowDeleteActivityPopUp()} onClose={showDeleteActivityPopUp}/>
             </div>
             }
             <div className="card-body">

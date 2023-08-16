@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./stopActivityPopUp.css"
 import UpdateExpireDate from "../utils/patchActivities/updateExpireDate";
 import ExcludeDate from "../utils/postActivities/excludeDate";
+import { ActivitiesDispatchContext } from "../utils/activitiesContext";
 function DeleteActivityPopUp(props) {
     /*React will understand the following as long as the names
     (onClose, setOnClose) are the same as in the parent component */
     const {onClose, setOnClose} = props 
+    const dispatch = useContext(ActivitiesDispatchContext)
 
     const [moreInfoLi1, setMoreInfoLi1] = useState(false);
     const [moreInfoLi2, setMoreInfoLi2] = useState(false);
@@ -30,12 +32,36 @@ function DeleteActivityPopUp(props) {
 
 
     function updateExpireDate() {
-        UpdateExpireDate({ id: props.activity.id, dateExpired: convertActivityDate(), s: props.s})
+        const dateExpired = convertActivityDate()
+        UpdateExpireDate({ id: props.activity.id, dateExpired: dateExpired})
+        .then(result => {
+            if (result) {
+                dispatch({
+                    type: "deletedAllFutureEvents",
+                    id: props.activity.id,
+                    expiredDate: dateExpired,
+                })
+            } else {
+                console.log("Failed to delete upcomming events")
+            }
+        })
         setOnClose(false)
     }
 
     function excludeDate() {
-        ExcludeDate({id: props.activity.id, dateToBeExcluded: convertActivityDate(), s: props.s})
+        const dateToBeExcluded = convertActivityDate()
+        ExcludeDate({id: props.activity.id, dateToBeExcluded: dateToBeExcluded})
+        .then(result => {
+            if (result) {
+                dispatch({
+                    type: "deletedOneEvent",
+                    id: props.activity.id,
+                    dateToExclude: dateToBeExcluded,
+                })
+            } else {
+                console.log("Failed to delete the event")
+            }
+        })
         setOnClose(false)
     }
 
